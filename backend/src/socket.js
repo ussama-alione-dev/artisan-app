@@ -1,34 +1,44 @@
-// socket.js — Socket.io real-time chat handler
-const { addMessage, getMessages } = require('./store');
+// socket.js — socket.io real-time chat handler
+const Message = require("./models/Message");
 
 module.exports = function (io) {
-  io.on('connection', (socket) => {
-    console.log('Socket connected:', socket.id);
+  io.on("connection", (socket) => {
+    console.log("Socket connected:", socket.id);
 
-    // Join a private chat room (roomId = sorted userId pair)
-    socket.on('join_room', (roomId) => {
+    // join a private chat room
+    socket.on("join_room", async (roomId) => {
       socket.join(roomId);
-      const history = getMessages(roomId);
-      socket.emit('message_history', history);
+      try {
+        const history = await Message.find({ roomId }).sort({ createdAt: 1 });
+        socket.emit("message_history", history);
+      } catch (err) {
+        console.error("Failed to load message history:", err.message);
+        socket.emit("message_history", []);
+      }
     });
 
-    // Send a message
-    socket.on('send_message', ({ roomId, senderId, senderName, text }) => {
-      const msg = addMessage(roomId, { senderId, senderName, text });
-      io.to(roomId).emit('new_message', msg);
+    // send a message
+    socket.on("send_message", async ({ roomId, senderId, senderName, text }) => {
+      try {
+        const msg = await Message.create({ roomId, sender: senderId, senderName, text });
+        io.to(roomId).emit("new_message", msg);
+      } catch (err) {
+        console.error("Failed to save message:", err.message);
+        socket.emit("message_error", { error: "Could not send message" });
+      }
     });
 
-    // Typing indicator
-    socket.on('typing', ({ roomId, senderName }) => {
-      socket.to(roomId).emit('user_typing', senderName);
+    // typing indicator
+    socket.on("typing", ({ roomId, senderName }) => {
+      socket.to(roomId).emit("user_typing", senderName);
     });
 
-    socket.on('stop_typing', ({ roomId }) => {
-      socket.to(roomId).emit('user_stop_typing');
+    socket.on("stop_typing", ({ roomId }) => {
+      socket.to(roomId).emit("user_stop_typing");
     });
 
-    socket.on('disconnect', () => {
-      console.log('Socket disconnected:', socket.id);
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected:", socket.id);
     });
   });
 };

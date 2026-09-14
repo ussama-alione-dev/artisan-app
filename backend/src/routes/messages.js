@@ -1,14 +1,18 @@
-// routes/messages.js — Get message history for a room
-const express = require('express');
-const { getMessages } = require('../store');
-const { requireAuth } = require('../middleware');
+// routes/messages.js
+const express = require("express");
+const { param } = require("express-validator");
+const { getRoomMessages } = require("../controllers/messageController");
+const { requireAuth } = require("../middleware/auth");
+const validate = require("../middleware/validate");
 
 const router = express.Router();
 
-// GET /api/messages/:roomId
-router.get('/:roomId', requireAuth, (req, res) => {
-  const messages = getMessages(req.params.roomId);
-  res.json(messages);
-});
+router.get(
+  "/:roomId",
+  requireAuth,
+  [param("roomId", "roomId is required").notEmpty()],
+  validate,
+  getRoomMessages
+);
 
 module.exports = router;
