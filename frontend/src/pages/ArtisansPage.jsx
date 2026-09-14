@@ -35,9 +35,17 @@ export default function ArtisansPage() {
             if (specialty) params.specialty = specialty;
             if (city.trim()) params.city = city.trim();
             if (availableOnly) params.available = "true";
-            setArtisans(await api.getArtisans(params));
+
+            const result = await api.getArtisans(params);
+            // adapte selon la vraie forme de la réponse
+            setArtisans(
+                Array.isArray(result)
+                    ? result
+                    : result.artisans || result.data || [],
+            );
         } catch (err) {
             console.error(err);
+            setArtisans([]); // évite de rester bloqué sur une valeur non-array
         } finally {
             setLoading(false);
         }
