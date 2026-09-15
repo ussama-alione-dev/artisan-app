@@ -20,7 +20,8 @@ function Field({
                         className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                     />
                     <input
-                        className="input pl-10"
+                        className="input"
+                        style={{ paddingLeft: "2.75rem" }}
                         type={type}
                         placeholder={placeholder}
                         required={required}

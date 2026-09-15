@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Wrench, ArrowRight, Zap } from "lucide-react";
 import { api } from "../api";
 import { useAuth } from "../context/AuthContext";
+import RegisterFormField from "../components/RegisterFormField";
 
 const DEMOS = [
     {
@@ -103,54 +104,36 @@ export default function LoginPage() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                Email
-                            </label>
-                            <div className="relative">
-                                <Mail
-                                    size={16}
-                                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-                                <input
-                                    className="input pl-10"
-                                    type="email"
-                                    placeholder="you@example.com"
-                                    required
-                                    value={form.email}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            email: e.target.value,
-                                        })
-                                    }
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                                Password
-                            </label>
-                            <div className="relative">
-                                <Lock
-                                    size={16}
-                                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                                />
-                                <input
-                                    className="input pl-10"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    required
-                                    value={form.password}
-                                    onChange={(e) =>
-                                        setForm({
-                                            ...form,
-                                            password: e.target.value,
-                                        })
-                                    }
-                                />
-                            </div>
-                        </div>
+                        <RegisterFormField
+                            icon={Mail}
+                            label="Email"
+                            type="email"
+                            placeholder="you@example.com"
+                            required
+                            value={form.email}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    email: e.target.value,
+                                })
+                            }
+                        />
+
+                        <RegisterFormField
+                            icon={Lock}
+                            label="Password"
+                            type="password"
+                            placeholder="••••••••"
+                            required
+                            value={form.password}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    password: e.target.value,
+                                })
+                            }
+                        />
+
                         <button
                             type="submit"
                             disabled={loading}
