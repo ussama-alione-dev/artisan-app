@@ -1,6 +1,7 @@
 // RegisterPage.jsx — Modern register form with role cards
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Field from "../components/RegisterFormField";
 import {
     User,
     Mail,
@@ -185,7 +186,7 @@ export default function RegisterPage() {
                                     <div className="relative">
                                         <Briefcase
                                             size={16}
-                                            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                                            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
                                         />
                                         <select
                                             className="input pl-10 appearance-none"

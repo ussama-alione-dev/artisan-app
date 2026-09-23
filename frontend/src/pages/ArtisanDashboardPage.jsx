@@ -56,7 +56,11 @@ export default function ArtisanDashboardPage() {
 
     useEffect(() => {
         api.getMyDemandes()
-            .then(setDemandes)
+            .then((res) =>
+                setDemandes(
+                    Array.isArray(res) ? res : res.demandes || res.data || [],
+                ),
+            )
             .catch(console.error)
             .finally(() => setLoading(false));
         api.getArtisan(user.id)
