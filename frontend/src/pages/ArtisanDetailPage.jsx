@@ -32,7 +32,7 @@ export default function ArtisanDetailPage() {
     const [artisan, setArtisan] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    console.log(artisan);
+    console.log(artisan?.artisan);
 
     useEffect(() => {
         api.getArtisan(id)
@@ -141,7 +141,7 @@ export default function ArtisanDetailPage() {
                     {user?.role === "client" ? (
                         <div className="flex gap-3">
                             <Link
-                                to={`/demande/${artisan.userId}`}
+                                to={`/demande/${artisan?.artisan?.userId}`}
                                 className="btn btn-primary flex-1 justify-center"
                             >
                                 <Send size={15} /> Send a Request

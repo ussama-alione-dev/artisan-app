@@ -28,7 +28,7 @@ export default function ArtisansPage() {
     const [city, setCity] = useState("");
     const [availableOnly, setAvailableOnly] = useState(false);
 
-    async function fetch() {
+    async function fetchArtisans() {
         setLoading(true);
         try {
             const params = {};
@@ -37,22 +37,28 @@ export default function ArtisansPage() {
             if (availableOnly) params.available = "true";
 
             const result = await api.getArtisans(params);
-            // adapte selon la vraie forme de la réponse
-            setArtisans(
-                Array.isArray(result)
-                    ? result
-                    : result.artisans || result.data || [],
-            );
+            const list = Array.isArray(result)
+                ? result
+                : result.artisans || result.data || [];
+
+            // Normalize: guarantee every artisan has a usable `userId`,
+            // no matter what the backend actually calls it.
+            const normalized = list.map((a) => ({
+                ...a,
+                userId: a.userId || a._id || a.user?._id || a.user,
+            }));
+
+            setArtisans(normalized);
         } catch (err) {
             console.error(err);
-            setArtisans([]); // évite de rester bloqué sur une valeur non-array
+            setArtisans([]);
         } finally {
             setLoading(false);
         }
     }
 
     useEffect(() => {
-        fetch();
+        fetchArtisans();
     }, [specialty, city, availableOnly]);
 
     return (
@@ -137,7 +143,7 @@ export default function ArtisansPage() {
             ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {artisans.map((a) => (
-                        <ArtisanCard key={a.userId} artisan={a} />
+                        <ArtisanCard key={a?.artisan?.userId} artisan={a} />
                     ))}
                 </div>
             )}
